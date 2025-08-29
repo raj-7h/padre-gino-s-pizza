@@ -89,7 +89,7 @@ nav > a {
 
 @font-face {
   font-family: Pacifico;
-  src: url("/Pacifico-Regular.ttf");
+  src: url("/Pacifico-Regular.ttf") format("truetype");
 }
 
 h2 {
