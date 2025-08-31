@@ -2,7 +2,9 @@ import fastify from "fastify";
 import fastifyStatic from "@fastify/static";
 import path from "path";
 import { fileURLToPath } from "url";
-import { AsyncDatabase } from "promised-sqlite3";
+import Database from "better-sqlite3";
+
+const db = new Database("./pizza.sqlite");
 
 const server = fastify({
   logger: {
@@ -17,29 +19,21 @@ const PORT = process.env.PORT || 3000;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const db = await AsyncDatabase.open("./pizza.sqlite");
-
 server.register(fastifyStatic, {
   root: path.join(__dirname, "public"),
   prefix: "/public/",
 });
 
-server.get("/api/pizzas", async function getPizzas(req, res) {
-  const pizzasPromise = db.all(
-    "SELECT pizza_type_id, name, category, ingredients as description FROM pizza_types",
-  );
-  const pizzaSizesPromise = db.all(
-    `SELECT 
-      pizza_type_id as id, size, price
-    FROM 
-      pizzas
-  `,
-  );
+server.get("/api/pizzas", (req, res) => {
+  const pizzas = db
+    .prepare(
+      "SELECT pizza_type_id, name, category, ingredients as description FROM pizza_types"
+    )
+    .all();
 
-  const [pizzas, pizzaSizes] = await Promise.all([
-    pizzasPromise,
-    pizzaSizesPromise,
-  ]);
+  const pizzaSizes = db
+    .prepare("SELECT pizza_type_id as id, size, price FROM pizzas")
+    .all();
 
   const responsePizzas = pizzas.map((pizza) => {
     const sizes = pizzaSizes.reduce((acc, current) => {
@@ -61,27 +55,30 @@ server.get("/api/pizzas", async function getPizzas(req, res) {
   res.send(responsePizzas);
 });
 
-server.get("/api/pizza-of-the-day", async function getPizzaOfTheDay(req, res) {
-  const pizzas = await db.all(
-    `SELECT 
+server.get("/api/pizza-of-the-day", function getPizzaOfTheDay(req, res) {
+  const pizzas = db
+    .prepare(
+      `SELECT 
       pizza_type_id as id, name, category, ingredients as description
     FROM 
-      pizza_types`,
-  );
+      pizza_types`
+    )
+    .all();
 
   const daysSinceEpoch = Math.floor(Date.now() / 86400000);
   const pizzaIndex = daysSinceEpoch % pizzas.length;
   const pizza = pizzas[pizzaIndex];
 
-  const sizes = await db.all(
-    `SELECT
+  const sizes = db
+    .prepare(
+      `SELECT
       size, price
     FROM
       pizzas
     WHERE
-      pizza_type_id = ?`,
-    [pizza.id],
-  );
+      pizza_type_id = ?`
+    )
+    .all(pizza.id);
 
   const sizeObj = sizes.reduce((acc, current) => {
     acc[current.size] = +current.price;
@@ -100,21 +97,21 @@ server.get("/api/pizza-of-the-day", async function getPizzaOfTheDay(req, res) {
   res.send(responsePizza);
 });
 
-server.get("/api/orders", async function getOrders(req, res) {
+server.get("/api/orders", function getOrders(req, res) {
   const id = req.query.id;
-  const orders = await db.all("SELECT order_id, date, time FROM orders");
+  const orders = db.prepare("SELECT order_id, date, time FROM orders").all();
 
   res.send(orders);
 });
 
-server.get("/api/order", async function getOrders(req, res) {
+server.get("/api/order", function getOrders(req, res) {
   const id = req.query.id;
-  const orderPromise = db.get(
-    "SELECT order_id, date, time FROM orders WHERE order_id = ?",
-    [id],
-  );
-  const orderItemsPromise = db.all(
-    `SELECT 
+  const order = db
+    .prepare("SELECT order_id, date, time FROM orders WHERE order_id = ?")
+    .get(id);
+  const orderItemsRes = db
+    .prepare(
+      `SELECT 
       t.pizza_type_id as pizzaTypeId, t.name, t.category, t.ingredients as description, o.quantity, p.price, o.quantity * p.price as total, p.size
     FROM 
       order_details o
@@ -127,21 +124,16 @@ server.get("/api/order", async function getOrders(req, res) {
     ON
       p.pizza_type_id = t.pizza_type_id
     WHERE 
-      order_id = ?`,
-    [id],
-  );
-
-  const [order, orderItemsRes] = await Promise.all([
-    orderPromise,
-    orderItemsPromise,
-  ]);
+      order_id = ?`
+    )
+    .all(id);
 
   const orderItems = orderItemsRes.map((item) =>
     Object.assign({}, item, {
       image: `/public/pizzas/${item.pizzaTypeId}.webp`,
       quantity: +item.quantity,
       price: +item.price,
-    }),
+    })
   );
 
   const total = orderItems.reduce((acc, item) => acc + item.total, 0);
@@ -152,7 +144,7 @@ server.get("/api/order", async function getOrders(req, res) {
   });
 });
 
-server.post("/api/order", async function createOrder(req, res) {
+server.post("/api/order", function createOrder(req, res) {
   const { cart } = req.body;
 
   const now = new Date();
@@ -166,13 +158,12 @@ server.post("/api/order", async function createOrder(req, res) {
   }
 
   try {
-    await db.run("BEGIN TRANSACTION");
+    db.prepare("BEGIN TRANSACTION").run();
 
-    const result = await db.run(
-      "INSERT INTO orders (date, time) VALUES (?, ?)",
-      [date, time],
-    );
-    const orderId = result.lastID;
+    const result = db
+      .prepare("INSERT INTO orders (date, time) VALUES (?, ?)")
+      .run(date, time);
+    const orderId = result.lastInsertRowid;
 
     const mergedCart = cart.reduce((acc, item) => {
       const id = item.pizza.id;
@@ -193,18 +184,17 @@ server.post("/api/order", async function createOrder(req, res) {
 
     for (const item of Object.values(mergedCart)) {
       const { pizzaId, quantity } = item;
-      await db.run(
-        "INSERT INTO order_details (order_id, pizza_id, quantity) VALUES (?, ?, ?)",
-        [orderId, pizzaId, quantity],
-      );
+      db.prepare(
+        "INSERT INTO order_details (order_id, pizza_id, quantity) VALUES (?, ?, ?)"
+      ).run(orderId, pizzaId, quantity);
     }
 
-    await db.run("COMMIT");
+    db.prepare("COMMIT").run();
 
     res.send({ orderId });
   } catch (error) {
     req.log.error(error);
-    await db.run("ROLLBACK");
+    db.prepare("ROLLBACK").run();
     res.status(500).send({ error: "Failed to create order" });
   }
 });
@@ -215,10 +205,11 @@ server.get("/api/past-orders", async function getPastOrders(req, res) {
     const page = parseInt(req.query.page, 10) || 1;
     const limit = 20;
     const offset = (page - 1) * limit;
-    const pastOrders = await db.all(
-      "SELECT order_id, date, time FROM orders ORDER BY order_id DESC LIMIT 10 OFFSET ?",
-      [offset],
-    );
+    const pastOrders = db
+      .prepare(
+        "SELECT order_id, date, time FROM orders ORDER BY order_id DESC LIMIT 10 OFFSET ?"
+      )
+      .all(offset);
     res.send(pastOrders);
   } catch (error) {
     req.log.error(error);
@@ -226,22 +217,22 @@ server.get("/api/past-orders", async function getPastOrders(req, res) {
   }
 });
 
-server.get("/api/past-order/:order_id", async function getPastOrder(req, res) {
+server.get("/api/past-order/:order_id", function getPastOrder(req, res) {
   const orderId = req.params.order_id;
 
   try {
-    const order = await db.get(
-      "SELECT order_id, date, time FROM orders WHERE order_id = ?",
-      [orderId],
-    );
+    const order = db
+      .prepare("SELECT order_id, date, time FROM orders WHERE order_id = ?")
+      .get(orderId);
 
     if (!order) {
       res.status(404).send({ error: "Order not found" });
       return;
     }
 
-    const orderItems = await db.all(
-      `SELECT 
+    const orderItems = db
+      .prepare(
+        `SELECT 
         t.pizza_type_id as pizzaTypeId, t.name, t.category, t.ingredients as description, o.quantity, p.price, o.quantity * p.price as total, p.size
       FROM 
         order_details o
@@ -254,21 +245,21 @@ server.get("/api/past-order/:order_id", async function getPastOrder(req, res) {
       ON
         p.pizza_type_id = t.pizza_type_id
       WHERE 
-        order_id = ?`,
-      [orderId],
-    );
+        order_id = ?`
+      )
+      .all(orderId);
 
     const formattedOrderItems = orderItems.map((item) =>
       Object.assign({}, item, {
         image: `/public/pizzas/${item.pizzaTypeId}.webp`,
         quantity: +item.quantity,
         price: +item.price,
-      }),
+      })
     );
 
     const total = formattedOrderItems.reduce(
       (acc, item) => acc + item.total,
-      0,
+      0
     );
 
     res.send({

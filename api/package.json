@@ -13,8 +13,8 @@
   "description": "",
   "dependencies": {
     "@fastify/static": "7.0.4",
+    "better-sqlite3": "^12.2.0",
     "fastify": "4.28.1",
-    "pino-pretty": "11.2.2",
-    "promised-sqlite3": "2.1.0"
+    "pino-pretty": "11.2.2"
   }
 }
