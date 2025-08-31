@@ -23,7 +23,11 @@ function Order() {
   const [loading, setLoading] = useState(true);
 
   async function checkout() {
-    await fetch("/api/order", {
+    const baseUrl =
+      import.meta.env.MODE === "development"
+        ? ""
+        : import.meta.env.VITE_BACKEND_URL;
+    await fetch(`${baseUrl}/api/order`, {
       method: "post",
       headers: {
         "Content-Type": "application/json",
@@ -43,7 +47,11 @@ function Order() {
   }
 
   async function fetchPizzaTypes() {
-    const pizzaRes = await fetch("/api/pizzas");
+    const baseUrl =
+      import.meta.env.MODE === "development"
+        ? ""
+        : import.meta.env.VITE_BACKEND_URL;
+    const pizzaRes = await fetch(`${baseUrl}/api/pizzas`);
     const pizzaJson = await pizzaRes.json();
     setPizzaTypes(pizzaJson);
     setLoading(false);

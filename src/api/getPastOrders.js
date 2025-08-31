@@ -1,7 +1,8 @@
 export default async function getPastOrders(page) {
-  const response = await fetch(
-    `https://pizza-backend-xpbk.onrender.com/api/past-orders?lpage=${page}`,
-  );
+  import.meta.env.MODE === "development"
+    ? "" // use relative path → Vite proxy forwards to localhost
+    : import.meta.env.VITE_BACKEND_URL; // production backend
+  const response = await fetch(`${baseUrl}/api/past-orders?lpage=${page}`);
   const data = await response.json();
   return data;
 }

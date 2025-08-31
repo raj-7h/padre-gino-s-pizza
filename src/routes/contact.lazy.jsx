@@ -9,7 +9,11 @@ export const Route = createLazyFileRoute("/contact")({
 function ContactRoute() {
   const mutation = useMutation({
     mutationFn: async (formData) => {
-      const res = await fetch("/api/postContact", {
+      const baseUrl =
+        import.meta.env.MODE === "development"
+          ? ""
+          : import.meta.env.VITE_BACKEND_URL;
+      const res = await fetch(`${baseUrl}/api/postContact`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

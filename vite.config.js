@@ -1,17 +1,19 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { TanStackRouterVite } from "@tanstack/router-plugin/vite";
-import { target } from "happy-dom/lib/PropertySymbol.js";
+import dotenv from "dotenv";
+
+dotenv.config(); // load .env variables
 
 export default defineConfig({
   server: {
     proxy: {
       "/api": {
-        target: "http://localhost:3000",
+        target: process.env.VITE_BACKEND_URL,
         changeOrigin: true,
       },
       "/public": {
-        target: "http://localhost:3000",
+        target: process.env.VITE_BACKEND_URL,
         changeOrigin: true,
       },
     },

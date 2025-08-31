@@ -13,7 +13,11 @@ function ErrorBoundaryWrappedPastOrderRoutes() {
   const loadedPromise = useQuery({
     queryKey: ["past-orders", page],
     queryFn: async () => {
-      const response = await fetch(`/api/past-orders?page=${page}`);
+      const baseUrl =
+        import.meta.env.MODE === "development"
+          ? ""
+          : import.meta.env.VITE_BACKEND_URL;
+      const response = await fetch(`${baseUrl}/api/past-orders?page=${page}`);
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
@@ -45,7 +49,11 @@ function PastOrdersRoute({ page, setPage, loadedPromise }) {
   const { isLoading: isLoadingPastOrder, data: pastOrderData } = useQuery({
     queryKey: ["past-order", focusedOrder],
     queryFn: async () => {
-      const response = await fetch(`/api/past-order/${focusedOrder}`);
+      const baseUrl =
+        import.meta.env.MODE === "development"
+          ? ""
+          : import.meta.env.VITE_BACKEND_URL;
+      const response = await fetch(`${baseUrl}/api/past-order/${focusedOrder}`);
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
