@@ -6,13 +6,7 @@ import Database from "better-sqlite3";
 
 const db = new Database("./pizza.sqlite");
 
-const server = fastify({
-  logger: {
-    transport: {
-      target: "pino-pretty",
-    },
-  },
-});
+const server = fastify({ logger: true });
 
 const PORT = process.env.PORT || 3000;
 
