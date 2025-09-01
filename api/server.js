@@ -20,7 +20,7 @@ server.register(fastifyCors, {
 
 server.register(fastifyStatic, {
   root: path.join(__dirname, "public"),
-  prefix: "/public/",
+  prefix: "/",
   setHeaders: (res, path, stat) => {
     res.setHeader("Access-Control-Allow-Origin", "*");
     res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
