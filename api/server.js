@@ -53,7 +53,7 @@ server.get("/api/pizzas", (req, res) => {
       name: pizza.name,
       category: pizza.category,
       description: pizza.description,
-      image: `${API_URL}/public/pizzas/${pizza.pizza_type_id}.webp`,
+      image: `${API_URL}/public/pizzas/${pizza.pizza_type_id.toLowerCase()}.webp`,
       sizes,
     };
   });
@@ -96,7 +96,7 @@ server.get("/api/pizza-of-the-day", function getPizzaOfTheDay(req, res) {
     name: pizza.name,
     category: pizza.category,
     description: pizza.description,
-    image: `${API_URL}/public/pizzas/${pizza.id}.webp`,
+    image: `${API_URL}/public/pizzas/${pizza.id.toLowerCase()}.webp`,
     sizes: sizeObj,
   };
 
@@ -136,7 +136,7 @@ server.get("/api/order", function getOrders(req, res) {
 
   const orderItems = orderItemsRes.map((item) =>
     Object.assign({}, item, {
-      image: `${API_URL}/public/pizzas/${item.pizzaTypeId}.webp`,
+      image: `${API_URL}/public/pizzas/${item.pizzaTypeId.toLowerCase()}.webp`,
       quantity: +item.quantity,
       price: +item.price,
     })
@@ -257,7 +257,7 @@ server.get("/api/past-order/:order_id", function getPastOrder(req, res) {
 
     const formattedOrderItems = orderItems.map((item) =>
       Object.assign({}, item, {
-        image: `${API_URL}/public/pizzas/${item.pizzaTypeId}.webp`,
+        image: `${API_URL}/public/pizzas/${item.pizzaTypeId.toLowerCase()}.webp`,
         quantity: +item.quantity,
         price: +item.price,
       })
