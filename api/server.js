@@ -4,6 +4,9 @@ import fastifyStatic from "@fastify/static";
 import path from "path";
 import { fileURLToPath } from "url";
 import Database from "better-sqlite3";
+import "dotenv/config";
+
+const API_URL = process.env.API_URL || "http://localhost:3000";
 
 const db = new Database("./pizza.sqlite");
 
@@ -20,7 +23,7 @@ server.register(fastifyCors, {
 
 server.register(fastifyStatic, {
   root: path.join(__dirname, "public"),
-  prefix: "/",
+  prefix: "/public/",
   setHeaders: (res, path, stat) => {
     res.setHeader("Access-Control-Allow-Origin", "*");
     res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
@@ -50,7 +53,7 @@ server.get("/api/pizzas", (req, res) => {
       name: pizza.name,
       category: pizza.category,
       description: pizza.description,
-      image: `/public/pizzas/${pizza.pizza_type_id}.webp`,
+      image: `${API_URL}/public/pizzas/${pizza.pizza_type_id}.webp`,
       sizes,
     };
   });
@@ -93,7 +96,7 @@ server.get("/api/pizza-of-the-day", function getPizzaOfTheDay(req, res) {
     name: pizza.name,
     category: pizza.category,
     description: pizza.description,
-    image: `/public/pizzas/${pizza.id}.webp`,
+    image: `${API_URL}/public/pizzas/${pizza.id}.webp`,
     sizes: sizeObj,
   };
 
@@ -133,7 +136,7 @@ server.get("/api/order", function getOrders(req, res) {
 
   const orderItems = orderItemsRes.map((item) =>
     Object.assign({}, item, {
-      image: `/public/pizzas/${item.pizzaTypeId}.webp`,
+      image: `${API_URL}/public/pizzas/${item.pizzaTypeId}.webp`,
       quantity: +item.quantity,
       price: +item.price,
     })
@@ -254,7 +257,7 @@ server.get("/api/past-order/:order_id", function getPastOrder(req, res) {
 
     const formattedOrderItems = orderItems.map((item) =>
       Object.assign({}, item, {
-        image: `/public/pizzas/${item.pizzaTypeId}.webp`,
+        image: `${API_URL}/public/pizzas/${item.pizzaTypeId}.webp`,
         quantity: +item.quantity,
         price: +item.price,
       })
