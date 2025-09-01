@@ -23,6 +23,7 @@ server.register(fastifyStatic, {
   prefix: "/public/",
   setHeaders: (res, path, stat) => {
     res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
   },
 });
 
