@@ -21,6 +21,9 @@ server.register(fastifyCors, {
 server.register(fastifyStatic, {
   root: path.join(__dirname, "public"),
   prefix: "/public/",
+  setHeaders: (res, path, stat) => {
+    res.setHeader("Access-Control-Allow-Origin", "*");
+  },
 });
 
 server.get("/api/pizzas", (req, res) => {
