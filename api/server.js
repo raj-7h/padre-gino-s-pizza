@@ -255,7 +255,7 @@ server.get("/api/past-order/:order_id", function getPastOrder(req, res) {
 
     const formattedOrderItems = orderItems.map((item) =>
       Object.assign({}, item, {
-        image: `/public/pizzas/${item.pizzaTypeId}.webp`,
+        image: `${API_URL}/public/pizzas/${item.pizzaTypeId}.webp`,
         quantity: +item.quantity,
         price: +item.price,
       })
