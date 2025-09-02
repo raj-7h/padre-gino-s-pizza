@@ -8,7 +8,7 @@ import "dotenv/config";
 
 const db = new Database("./pizza.sqlite");
 const PORT = process.env.PORT || 3000;
-const API_URL = process.env.API_URL || `http://localhost:${PORT}`;
+const API_URL = process.env.API_URL;
 
 const server = fastify({ logger: true });
 
