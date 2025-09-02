@@ -1,4 +1,5 @@
 import { usePizzaOfTheDay } from "./usePizzaOfTheDay";
+import Loading from "./Loading";
 
 const intl = new Intl.NumberFormat("en-us", {
   style: "currency",
@@ -9,7 +10,7 @@ const PizzaOfTheDay = () => {
   const pizzaOfTheDay = usePizzaOfTheDay();
 
   if (!pizzaOfTheDay) {
-    return <div>Loading...</div>;
+    return <Loading message="Loading Pizza Of The Day..." />;
   }
   return (
     <div className="pizza-of-the-day">
