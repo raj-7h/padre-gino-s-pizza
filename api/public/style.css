@@ -63,6 +63,9 @@ nav > a {
   align-items: center;
   justify-content: center;
 }
+.icon {
+  color: slategray;
+}
 
 .nav-cart {
   grid-area: cart;

@@ -1,6 +1,7 @@
 import { use } from "react";
 import { CartContext } from "./Contexts";
 import { Link } from "@tanstack/react-router";
+import { GrCart } from "react-icons/gr";
 export default function Header() {
   const [cart] = use(CartContext);
   return (
@@ -9,7 +10,8 @@ export default function Header() {
         <h1 className="logo">Padre Gino's Pizza</h1>
       </Link>
       <div className="nav-cart">
-        🛒<span className="nav-cart-number">{cart.length}</span>
+        <GrCart className="icon" />
+        <span className="nav-cart-number">{cart.length}</span>
       </div>
     </nav>
   );

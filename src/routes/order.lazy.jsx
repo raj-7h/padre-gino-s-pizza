@@ -3,7 +3,7 @@ import { createLazyFileRoute } from "@tanstack/react-router";
 import Pizza from "../Pizza";
 import Cart from "../Cart";
 import { CartContext } from "../Contexts";
-import Loading from "../Loading";
+
 export const Route = createLazyFileRoute("/order")({
   component: Order,
 });
@@ -133,12 +133,12 @@ function Order() {
               <p>{price}</p>
             </div>
           ) : (
-            <LoadingPage message="Loading Pizza..." />
+            <h1>"loading pizza lol"</h1>
           )}
         </form>
       </div>
       {loading ? (
-        <LoadingPage message="Fetching Pizzas..." />
+        <h2> LOADING....</h2>
       ) : (
         <Cart checkout={checkout} cart={cart} />
       )}
