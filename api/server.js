@@ -7,10 +7,10 @@ import Database from "better-sqlite3";
 import "dotenv/config";
 
 const db = new Database("./pizza.sqlite");
+const PORT = process.env.PORT || 3000;
+const API_URL = process.env.API_URL || `http://localhost:${PORT}`;
 
 const server = fastify({ logger: true });
-
-const PORT = process.env.PORT || 3000;
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -51,7 +51,7 @@ server.get("/api/pizzas", (req, res) => {
       name: pizza.name,
       category: pizza.category,
       description: pizza.description,
-      image: `/public/pizzas/${pizza.pizza_type_id}.webp`,
+      image: `${API_URL}/public/pizzas/${pizza.pizza_type_id}.webp`,
       sizes,
     };
   });
@@ -94,7 +94,7 @@ server.get("/api/pizza-of-the-day", function getPizzaOfTheDay(req, res) {
     name: pizza.name,
     category: pizza.category,
     description: pizza.description,
-    image: `/public/pizzas/${pizza.id}.webp`,
+    image: `${API_URL}/public/pizzas/${pizza.id}.webp`,
     sizes: sizeObj,
   };
 
@@ -134,7 +134,7 @@ server.get("/api/order", function getOrders(req, res) {
 
   const orderItems = orderItemsRes.map((item) =>
     Object.assign({}, item, {
-      image: `/public/pizzas/${item.pizzaTypeId}.webp`,
+      image: `${API_URL}/public/pizzas/${item.pizzaTypeId}.webp`,
       quantity: +item.quantity,
       price: +item.price,
     })
