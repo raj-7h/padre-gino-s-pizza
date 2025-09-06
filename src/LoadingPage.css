@@ -10,6 +10,13 @@
   position: static; /* ❌ remove absolute centering */
   transform: none;
 }
+.past-orders-loader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px; /* adjust to match your table/pagination height */
+  width: 100%;
+}
 
 .loading-parent {
   position: relative;

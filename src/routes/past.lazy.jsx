@@ -31,7 +31,9 @@ function ErrorBoundaryWrappedPastOrderRoutes() {
       <Suspense
         fallback={
           <div className="past-orders">
-            <Loading />
+            <div className="past-orders-loader">
+              <Loading />
+            </div>
           </div>
         }
       >
@@ -129,7 +131,7 @@ function PastOrdersRoute({ page, setPage, loadedPromise }) {
               </tbody>
             </table>
           ) : (
-            <div className="loading-overlay">
+            <div className="past-orders-loader">
               <Loading />
             </div>
           )}
