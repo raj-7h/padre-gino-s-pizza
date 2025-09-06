@@ -3,6 +3,7 @@ import { createLazyFileRoute } from "@tanstack/react-router";
 import Pizza from "../Pizza";
 import Cart from "../Cart";
 import { CartContext } from "../Contexts";
+import LoadingPage from "../Loading";
 
 export const Route = createLazyFileRoute("/order")({
   component: Order,
@@ -14,8 +15,6 @@ const intl = new Intl.NumberFormat("en-US", {
 });
 
 function Order() {
-  // const pizzaType = "pepperoni";
-  // const pizzaSize = "M";
   const [pizzaTypes, setPizzaTypes] = useState([]);
   const [pizzaType, setPizzaType] = useState("pepperoni");
   const [pizzaSize, setPizzaSize] = useState("M");
@@ -123,6 +122,7 @@ function Order() {
             </div>
             <button type="submit">Add to Cart</button>
           </div>
+
           {selectedPizza ? (
             <div className="order-pizza">
               <Pizza
@@ -133,12 +133,16 @@ function Order() {
               <p>{price}</p>
             </div>
           ) : (
-            <h1>"loading pizza lol"</h1>
+            <div className="loading-parent">
+              <LoadingPage />
+            </div>
           )}
         </form>
       </div>
       {loading ? (
-        <h2> LOADING....</h2>
+        <div className="loading-parent">
+          <LoadingPage />
+        </div>
       ) : (
         <Cart checkout={checkout} cart={cart} />
       )}

@@ -122,6 +122,7 @@ h2::after {
 }
 
 .order {
+  padding-top: 15px;
   width: 100%;
   margin-left: 5%;
 }
@@ -242,6 +243,7 @@ button:disabled {
 }
 
 .pizza-of-the-day {
+  padding-top: 15px;
   border-top: 1px solid var(--border);
   margin-top: 50px;
   width: 100%;
@@ -264,6 +266,7 @@ button:disabled {
 }
 
 .pizza-of-the-day-info {
+  margin-top: 10px;
   margin-right: 30px;
   line-height: 2;
   text-align: center;
@@ -311,7 +314,6 @@ button:disabled {
   color: var(--secondary);
   font-weight: bold;
   font-size: 40px;
-  text-transform: uppercase;
   max-width: 315px;
 }
 
@@ -454,6 +456,10 @@ td img {
   background-color: #999;
 }
 
+.contact {
+  padding-top: 15px;
+}
+
 .contact h3 {
   font-family: var(--font);
   color: var(--secondary);
@@ -461,4 +467,98 @@ td img {
   margin: 50px;
   font-weight: normal;
   font-size: 30px;
+}
+
+/* ===================== Responsive Styles ===================== */
+
+/* Mobile and small tablets */
+@media (max-width: 768px) {
+  nav {
+    grid-template-areas: "logo cart";
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    text-align: left;
+  }
+
+  .nav-cart {
+    font-size: 28px;
+  }
+
+  .order form {
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .order form > div {
+    width: 100%;
+    max-width: 400px;
+    border-right: none;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 15px;
+  }
+
+  .order-page {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    align-items: center;
+  }
+
+  .order {
+    padding-top: 15px;
+    justify-content: center;
+  }
+
+  .pizza-of-the-day,
+  .contact {
+    padding-top: 15px;
+  }
+  .pizza-of-the-day > div {
+    padding-top: 15px;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .contact input,
+  .contact textarea {
+    width: 100%;
+    max-width: 500px;
+  }
+
+  .index {
+    grid-template-columns: 1fr;
+    margin: 40px auto;
+    margin-bottom: 15px;
+  }
+}
+.index-brand {
+  justify-content: center;
+  align-items: center;
+}
+
+.index-brand p {
+  font-size: 24px;
+  font-weight: bold;
+  max-width: 350px;
+
+  h2 {
+    font-size: 28px;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .order-page {
+    grid-template-columns: 3fr 2fr;
+    gap: 30px;
+  }
+
+  .index {
+    grid-template-columns: 1fr 1fr;
+    margin: 80px auto;
+  }
+
+  .contact input,
+  .contact textarea {
+    width: 90%;
+  }
 }

@@ -1,5 +1,5 @@
 import { usePizzaOfTheDay } from "./usePizzaOfTheDay";
-
+import Loading from "./Loading";
 const intl = new Intl.NumberFormat("en-us", {
   style: "currency",
   currency: "USD",
@@ -9,7 +9,11 @@ const PizzaOfTheDay = () => {
   const pizzaOfTheDay = usePizzaOfTheDay();
 
   if (!pizzaOfTheDay) {
-    return <div>Loading...</div>;
+    return (
+      <div className=" loading-parent">
+        <Loading />
+      </div>
+    );
   }
   return (
     <div className="pizza-of-the-day">
@@ -22,11 +26,13 @@ const PizzaOfTheDay = () => {
             From: {intl.format(pizzaOfTheDay.sizes.S)}
           </p>
         </div>
-        <img
-          src={pizzaOfTheDay.image}
-          alt={pizzaOfTheDay.name}
-          className="pizza-of-the-day-image"
-        />
+        <div>
+          <img
+            src={pizzaOfTheDay.image}
+            alt={pizzaOfTheDay.name}
+            className="pizza-of-the-day-image"
+          />
+        </div>
       </div>
     </div>
   );

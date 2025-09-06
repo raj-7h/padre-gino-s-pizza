@@ -4,10 +4,23 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100vh;
-  background: linear-gradient(135deg, #f7d794, #f6b93b);
-  font-family: "Poppins", sans-serif;
-  color: #fff;
+  width: 100%;
+  height: 100%;
+  margin: 30px 0; /* optional spacing */
+  position: static; /* ❌ remove absolute centering */
+  transform: none;
+}
+
+.loading-parent {
+  position: relative;
+  height: 100%; /* ensures there's some height to center within */
+}
+.loading-overlay {
+  position: absolute;
+  inset: 0; /* fill parent */
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .pizza-loader {
@@ -20,7 +33,9 @@
   background: #f1c40f;
   box-shadow: inset 0 0 10px #e1b12c;
 }
-
+.pizza-loader + h2 {
+  margin-top: 20px;
+}
 .slice {
   position: absolute;
   width: 60px;
@@ -56,8 +71,10 @@ h2 {
   text-align: center;
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
 }
+h2.no-after::after {
+  content: none !important;
+}
 
-/* Spin animation */
 @keyframes spin {
   0% {
     transform: rotate(0deg);

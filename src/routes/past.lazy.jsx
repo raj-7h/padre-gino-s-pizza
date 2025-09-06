@@ -2,6 +2,7 @@ import { useState, Suspense, use } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { useQuery } from "@tanstack/react-query";
 import { createLazyFileRoute } from "@tanstack/react-router";
+import Loading from "../Loading";
 
 import Modal from "../Modal";
 import { priceConverter } from "../../useCurrency";
@@ -30,7 +31,7 @@ function ErrorBoundaryWrappedPastOrderRoutes() {
       <Suspense
         fallback={
           <div className="past-orders">
-            <h2>Loading Past Order...</h2>
+            <Loading />
           </div>
         }
       >
@@ -128,7 +129,9 @@ function PastOrdersRoute({ page, setPage, loadedPromise }) {
               </tbody>
             </table>
           ) : (
-            <p>Loading ...</p>
+            <div className="loading-overlay">
+              <Loading />
+            </div>
           )}
           <button onClick={() => setFocusedOrder()}>Close</button>
         </Modal>
